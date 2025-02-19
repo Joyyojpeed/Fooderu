@@ -20,12 +20,12 @@ export default function Hero(){
             </p>
 
             <div className="flex gap-4 text-sm py-5">
-               <button className="bg-primary text-white flex items-center gap-2
+               <button className="flex justify-center bg-primary text-white flex items-center gap-2
                px-4 py-2 rounded-full ">
                 ORDER NOW
                 <Right />
                 </button>
-               <button className="flex gap-3 py-2 text-gray-600 font-semibold">
+               <button className="flex items-center border-0 gap-3 py-2 text-gray-600 font-semibold">
                 Learn More
                 <Right />
                </button> 
