@@ -3,12 +3,30 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { signIn } from "next-auth/react"; 
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data: session, status } = useSession(); // Destructure both 'data' and 'status'
+  const { data: session, status, update } = useSession(); // Destructure both 'data' and 'status'
   const [userName, setUserName] = useState(""); // Initialize as an empty string
   const [email, setEmail] = useState(""); // State for email
+
+  async function handleProfileInfoUpdate(ev) {
+    ev.preventDefault();
+    const response = await fetch("api/profile", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: userName }),
+    });
+    const result = await response.json();
+    console.log("Server Response:", result); // Debugging
+
+    if (response.ok) {
+      await signIn("credentials", { redirect: false });
+
+      update({ user: { ...session.user, name: result.name } });
+    }
+  }
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -31,8 +49,10 @@ export default function ProfilePage() {
 
   return (
     <section className="mt-8">
-      <h1 className="text-center text-primary text-4xl mb-4">Profile</h1>
-      <form className="max-w-md mx-auto">
+      <h1 className="text-center bg - colour text-primary text-4xl mb-4">
+        Profile
+      </h1>
+      <div className="max-w-md mx-auto">
         <div className="flex gap-4 items-center">
           <div>
             <div className="p-2 rounded-lg">
@@ -46,7 +66,7 @@ export default function ProfilePage() {
               <button type="button">Edit</button>
             </div>
           </div>
-          <div className="grow">
+          <form className="grow" onSubmit={handleProfileInfoUpdate}>
             <input
               type="text"
               placeholder="Name"
@@ -62,9 +82,9 @@ export default function ProfilePage() {
             <button className="mb-4" type="submit">
               Save
             </button>
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </section>
   );
 }
